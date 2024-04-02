@@ -10,7 +10,7 @@
     <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
         Asegúrese de que su cuenta utilice una contraseña larga y aleatoria para mantenerse segura.
     </p>
-    <form method="post" action="{{ route('password.update') }}" class="">
+    <form method="post" action="{{ route('password.change') }}" class="">
         @csrf
         @method('put')
 

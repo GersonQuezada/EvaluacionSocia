@@ -114,7 +114,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.0/dist/sweetalert2.all.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.10.0/dist/sweetalert2.min.css" rel="stylesheet">
     {{-- RECAPTCHA --}}
-    <script src="https://www.google.com/recaptcha/api.js?render=6Ld6tTEpAAAAAMRRvM_r8z3BtPlcZf16ozXEuTRj"></script>
+    {{-- <script src="https://www.google.com/recaptcha/api.js?render=6Ld6tTEpAAAAAMRRvM_r8z3BtPlcZf16ozXEuTRj"></script>
     <script>
         document.addEventListener('submit', function(e){
             e.preventDefault();
@@ -130,7 +130,7 @@
                 });
             });
         });
-    </script>
+    </script> --}}
 </head>
 
 <body class="@yield('classes_body')" @yield('body_data')>
