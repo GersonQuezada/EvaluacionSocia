@@ -1,0 +1,25 @@
+<?php
+
+namespace Database\Seeders;
+
+use Database\Seeders\Auth\RolesSeeder;
+use Database\Seeders\Auth\UsuariosSeeder;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+
+class DatabaseSeeder extends Seeder
+{
+    /**
+     * Seed the application's database.
+     */
+    public function run(): void
+    {
+        $this->call([
+            // UsuariosSeeder::class,
+            RolesSeeder::class
+        ]);
+
+    }
+}
