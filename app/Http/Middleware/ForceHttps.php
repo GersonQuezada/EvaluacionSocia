@@ -15,6 +15,9 @@ class ForceHttps
      */
     public function handle(Request $request, Closure $next): Response
     {
-        return $next($request);
+        if(!$request->secure()){
+            return redirect()->secure($request->getRequestUri());
+        }
+        return  $next($request);
     }
 }
