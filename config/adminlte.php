@@ -86,7 +86,7 @@ return [
     'auth_logo' => [
         'enabled' => true,
         'img' => [
-            'path' => "vendor/adminlte/dist/img/logo.png",
+            'path' => "vendor/adminlte/dist/img/Logo.png",
             'alt' => 'Auth Logo',
             'class' => '',
             'width' => 50,
@@ -113,7 +113,7 @@ return [
         'enabled' => true,
         'mode' => 'fullscreen',
         'img' => [
-            'path' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
+            'path' => 'vendor/adminlte/dist/img/Logo.png',
             'alt' => 'AdminLTE Preloader Image',
             'effect' => 'animation__shake',
             'width' => 60,
