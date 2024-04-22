@@ -317,24 +317,24 @@ return [
         [
             'text' => 'Busqueda por DNI',
             'url' => '/PreEvaluadores/socia',
-            'icon' => 'fas fa-fw fa-user',
+            'icon' => 'fa-regular fa-id-card',
         ],
         [
             'text' => 'Busqueda por Banca Comunal',
             'url' => '/PreEvaluadores/bancaComunal',
-            'icon' => 'fas fa-fw fa-lock',
+            'icon' => 'fa-solid fa-people-group',
         ],
 
         ['header' => 'Malla de Riesgos'],
         [
             'text' => 'Busqueda por DNI',
             'url' => '/MallaSentinel/socia',
-            'icon' => 'fas fa-fw fa-user',
+            'icon' => 'fa-regular fa-id-card',
         ],
         [
             'text' => 'Busqueda por Banca Comunal',
             'url' => '/MallaSentinel/bancaComunal',
-            'icon' => 'fas fa-fw fa-lock',
+            'icon' => 'fa-solid fa-people-group',
         ],
     ],
 
