@@ -96,6 +96,9 @@
                         <th class="align-middle text-center text-black-50">Fecha de 2da Modificacion</th>
                         <th class="align-middle text-center text-black-50">Fecha Vigente del Pre Evaluador</th>
                 </thead>
+                <tfoot>
+
+                </tfoot>
             </table>
         </div>
     </div>

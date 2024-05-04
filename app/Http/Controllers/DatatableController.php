@@ -13,7 +13,8 @@ class DatatableController extends Controller
     // private $Sucursales = DB::table('rsg_usuario_sucursal')->where('IN_usuario_ID',auth()->user()->id)->select('VC_SUCURSAL')->get();
     public function DataTablePreEvaluadores(){
         $Sucursales = DB::table('rsg_usuario_sucursal')->where('IN_usuario_ID',auth()->user()->id)->select('VC_COD_SUCURSAL')->get();
-        return DataTables::collection(PreEvaluacion::all()->whereIn('CODREGION',array_column($Sucursales->toArray(), 'VC_COD_SUCURSAL')))->toJson();
+
+        return DataTables::collection(PreEvaluacion::whereIn('CODREGION',array_column($Sucursales->toArray(), 'VC_COD_SUCURSAL'))->get())->toJson();
     }
 
     public function DataTableMallaSentinel(){

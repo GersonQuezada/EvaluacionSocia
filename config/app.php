@@ -29,7 +29,7 @@ return [
     |
     */
 
-    'env' => env('APP_ENV', 'production'),
+    'env' => env('APP_ENV', 'local'),
 
     /*
     |--------------------------------------------------------------------------
@@ -57,7 +57,7 @@ return [
 
     'url' => env('APP_URL', 'https://aplicativos.credimujer.pe'),
 
-    'asset_url' => env('ASSET_URL'),
+    'asset_url' => env('ASSET_URL',null),
 
     /*
     |--------------------------------------------------------------------------
