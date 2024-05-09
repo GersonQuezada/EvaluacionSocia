@@ -27,20 +27,18 @@ Route::get('/', function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/PreEvaluadores/socia', [PreEvaluacionController::class, 'IndexSocia']);
     Route::get('/PreEvaluadores/bancaComunal', [PreEvaluacionController::class, 'IndexBC']);
     Route::get('/pre-evaluaciones/data', [DatatableController::class, 'DataTablePreEvaluadores'])->name('pre-evaluaciones.data');
     Route::get('/MallaSentinel/socia', [MallaSentinelController::class, 'IndexSocia']);
     Route::get('/MallaSentinel/bancaComunal', [MallaSentinelController::class, 'IndexBC']);
-    Route::get('/Malla-Sentinel/data', [DatatableController::class, 'DataTableMallaSentinel'])->name('malla-sentinel.data');
+    Route::post('/Malla-Sentinel/data', [DatatableController::class, 'DataTableMallaSentinel'])->name('malla-sentinel.data');
 });
 
 
 
 require __DIR__.'/auth.php';
 
-Auth::routes();
+// Auth::routes();
 
 // Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

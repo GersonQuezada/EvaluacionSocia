@@ -23,12 +23,14 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): RedirectResponse
+    public function store(LoginRequest $request)
     {
         $request->authenticate();
-
         $request->session()->regenerate();
-
+        $PswdObligatorio = auth()->user()->BT_ACT_PASSWORD_OBLIGATORIO;
+        if($PswdObligatorio == false){
+            return redirect()->route('profile.edit');
+        }
         return redirect()->intended(RouteServiceProvider::HOME);
     }
 

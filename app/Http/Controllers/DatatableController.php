@@ -12,13 +12,17 @@ class DatatableController extends Controller
 {
     // private $Sucursales = DB::table('rsg_usuario_sucursal')->where('IN_usuario_ID',auth()->user()->id)->select('VC_SUCURSAL')->get();
     public function DataTablePreEvaluadores(){
-        $Sucursales = DB::table('rsg_usuario_sucursal')->where('IN_usuario_ID',auth()->user()->id)->select('VC_COD_SUCURSAL')->get();
+        // $startTime = microtime(true);
 
-        return DataTables::collection(PreEvaluacion::whereIn('CODREGION',array_column($Sucursales->toArray(), 'VC_COD_SUCURSAL'))->get())->toJson();
+        $Sucursales = DB::table('rsg_usuario_sucursal')->where('IN_usuario_ID',auth()->user()->id)->select('VC_COD_SUCURSAL')->get();
+        $queryResult = PreEvaluacion::whereIn('CODREGION',array_column($Sucursales->toArray(), 'VC_COD_SUCURSAL'));
+
+        return  DataTables::make($queryResult)->toJson();
     }
 
     public function DataTableMallaSentinel(){
         $Sucursales = DB::table('rsg_usuario_sucursal')->where('IN_usuario_ID',auth()->user()->id)->select('VC_DES_SUCURSAL')->get();
-        return DataTables::collection(MallaSentinel::all()->whereIn('REGION',array_column($Sucursales->toArray(), 'VC_DES_SUCURSAL')))->toJson();
+        $queryResult = MallaSentinel::whereIn('REGION',array_column($Sucursales->toArray(), 'VC_DES_SUCURSAL'));
+        return DataTables::make($queryResult)->toJson();
     }
 }

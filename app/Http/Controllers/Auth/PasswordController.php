@@ -22,8 +22,10 @@ class PasswordController extends Controller
 
         $request->user()->update([
             'password' => Hash::make($validated['password']),
+            'BT_ACT_PASSWORD_OBLIGATORIO' => true
         ]);
 
-        return back()->with('status', 'password-updated');
+        return redirect()->route('login');
+        // ->with('status', 'password-updated2')->redirect();
     }
 }

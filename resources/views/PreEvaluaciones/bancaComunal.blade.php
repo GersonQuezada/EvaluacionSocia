@@ -10,6 +10,8 @@
                 new DataTable('#PreEvaluadores', {
                     responsive: true,
                     autowidth: false,
+                    processing: true,
+                    serverSide: true,
                     // dom: 'Bfrtip',
                     buttons:[
                         {

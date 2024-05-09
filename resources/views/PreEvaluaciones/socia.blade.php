@@ -7,10 +7,13 @@
 @section('js')
 
         <script>
-                new DataTable('#PreEvaluadores', {
-                    responsive: true,
 
+            var table =  new DataTable('#PreEvaluadores', {
+                    responsive: true,
+                    processing: true,
+                    serverSide: true,
                     autowidth: false,
+
                     // dom: 'QBfrtip',
                     buttons:[
                         {
@@ -32,12 +35,17 @@
                         }
                     ],
                     layout: {
-                        top : 'buttons'
+                        top1: {
+                            searchBuilder: {
+                                depthLimit: 2 // Limit the depth of search conditions
+                            }
+                        }
                     },
                     language: {
                         url : "{{asset('es-ES.json')}}"
                     },
                     ajax: "{{route('pre-evaluaciones.data')}}",
+
                     columns: [
                         { data: 'nombrecompleto', searchable: true }, // Nombre de la columna y clave en el JSON
                         { data: 'dni', searchable: true  },
@@ -60,6 +68,18 @@
 
                     ]
                 });
+
+            $('#search-btn').click(function() {
+                var nroDocumento = $('#NRODNI').val();
+                table.search(nroDocumento).draw();
+            });
+            $('#NRODNI').on('keyup', function(e) {
+                if (e.keyCode === 13) {
+                    $('#search-btn').click();
+                }
+            });
+
+
         </script>
 
 
@@ -71,7 +91,27 @@
     <section class="content-header">
         <h1> Listado de Pre Evaluadores - Busqueda Por Socias</h1>
     </section>
-
+    <div class="modal fade" data-backdrop="static" id="modal">
+        <div class="modal-dialog modal-">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h4 class="modal-title">Buscar Pre Evaluador - DNI</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body">
+                    <input type="number" class="form-control" maxlength="8" oninput="if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"  name="NRODNI" id = "NRODNI" placeholder="Nro Documento">
+                </div>
+                <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                <button type="submit" class="btn btn-primary sm" id="search-btn">Buscar</button>
+                </div>
+            </div>
+        <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
     <div class="card card-primary">
         <div class="card-header">
         </div>

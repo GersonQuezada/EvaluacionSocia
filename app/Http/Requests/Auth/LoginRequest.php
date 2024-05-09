@@ -5,6 +5,7 @@ namespace App\Http\Requests\Auth;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -43,12 +44,19 @@ class LoginRequest extends FormRequest
 
         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
-
-            throw ValidationException::withMessages([
-                'email' => trans('auth.password')
-            ]);
+            $lastAttemptedUser = Auth::getLastAttempted();
+            if (!$lastAttemptedUser) {
+                // Email is incorrect
+                throw ValidationException::withMessages([
+                    'email' => trans('auth.failed'),
+                ]);
+            } elseif (!Hash::check($this->input('password'), $lastAttemptedUser->password)) {
+                // Password is incorrect
+                throw ValidationException::withMessages([
+                    'password' => trans('auth.password'),
+                ]);
+            }
         }
-
         RateLimiter::clear($this->throttleKey());
     }
 

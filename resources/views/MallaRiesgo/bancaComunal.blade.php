@@ -9,7 +9,8 @@
         <script>
                 new DataTable('#PreEvaluadores', {
                     responsive: true,
-
+                    processing: true,
+                    serverSide: true,
                     autowidth: false,
                     // dom: 'QBfrtip',
                     buttons:[
@@ -35,9 +36,15 @@
                         top : 'buttons'
                     },
                     language: {
-                        url : "{{asset('es-ES.json')}}"
+                        url : "{{asset('es-ES.json')}}",
                     },
-                    ajax: "{{route('malla-sentinel.data')}}",
+                    ajax: {
+                        url : "{{route('malla-sentinel.data')}}",
+                        type : "POST",
+                        data : {
+                            _token: "{{ csrf_token() }}"
+                        }
+                    },
                     columns: [
                         { data: 'BancoComunal',searchable: true },
                         { data: 'REGION',searchable: false },

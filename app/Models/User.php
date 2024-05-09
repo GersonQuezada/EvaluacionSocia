@@ -22,6 +22,7 @@ class User extends Authenticatable
     protected $fillable = [
         'email',
         'password',
+        'BT_ACT_PASSWORD_OBLIGATORIO',
     ];
 
     /**
