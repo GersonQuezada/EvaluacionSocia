@@ -12,11 +12,8 @@ class DatatableController extends Controller
 {
     // private $Sucursales = DB::table('rsg_usuario_sucursal')->where('IN_usuario_ID',auth()->user()->id)->select('VC_SUCURSAL')->get();
     public function DataTablePreEvaluadores(){
-        // $startTime = microtime(true);
-
         $Sucursales = DB::table('rsg_usuario_sucursal')->where('IN_usuario_ID',auth()->user()->id)->select('VC_COD_SUCURSAL')->get();
         $queryResult = PreEvaluacion::whereIn('CODREGION',array_column($Sucursales->toArray(), 'VC_COD_SUCURSAL'));
-
         return  DataTables::make($queryResult)->toJson();
     }
 

@@ -13,15 +13,18 @@
                     processing: true,
                     serverSide: true,
                     autowidth: false,
-
-                    // dom: 'QBfrtip',
                     buttons:[
                         {
                             extend:    'excelHtml5',
                             text:      '<i class="fas fa-file-excel"></i> ',
                             titleAttr: 'Exportar a Excel',
                             footer: true,
-                            title: "Lista de Pre Evaluaciones"
+                            title: "Lista de Pre Evaluaciones",
+                            // action: function (e, dt, node, config, cb) {
+                            //     alert('Activated!');
+                            //     this.disable();
+                            //     DataTable.ext.buttons.csvHtml5.action.call(this, e, dt, node, config, cb);
+                            // }
                         },
                         {
                             extend:    'pdfHtml5',
@@ -35,17 +38,12 @@
                         }
                     ],
                     layout: {
-                        top1: {
-                            searchBuilder: {
-                                depthLimit: 2 // Limit the depth of search conditions
-                            }
-                        }
+                        topStart: 'buttons'
                     },
                     language: {
                         url : "{{asset('es-ES.json')}}"
                     },
                     ajax: "{{route('pre-evaluaciones.data')}}",
-
                     columns: [
                         { data: 'nombrecompleto', searchable: true }, // Nombre de la columna y clave en el JSON
                         { data: 'dni', searchable: true  },
@@ -67,7 +65,8 @@
                         // { data: 'dni' }, // Otra columna y su clave
 
                     ]
-                });
+            });
+
 
             $('#search-btn').click(function() {
                 var nroDocumento = $('#NRODNI').val();
