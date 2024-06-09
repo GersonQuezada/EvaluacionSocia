@@ -73,19 +73,18 @@
         <meta name="msapplication-TileImage" content="{{ asset('favicon/ms-icon-144x144.png') }}">
     @endif
 
-    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
     {{-- select2     --}}
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     {{-- datatable --}}
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
-    {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/js/bootstrap.min.js"></script> --}}
-    <script src="https://cdn.datatables.net/2.0.3/js/dataTables.js"></script>
-    <script src="https://cdn.datatables.net/2.0.3/js/dataTables.bootstrap4.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.css" rel="stylesheet" />
-    <link href="https://cdn.datatables.net/2.0.3/css/dataTables.bootstrap4.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/2.0.8/css/dataTables.bootstrap4.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap4.js"></script>
     {{-- Response datatable --}}
     <link href="https://cdn.datatables.net/responsive/3.0.1/css/responsive.bootstrap4.css" rel="stylesheet" />
     <script src="https://cdn.datatables.net/responsive/3.0.1/js/dataTables.responsive.js"></script>
@@ -99,15 +98,21 @@
     <script src="https://cdn.datatables.net/datetime/1.5.2/js/dataTables.dateTime.min.js" ></script>
 
     {{-- Botones datatable --}}
-    <link href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.css" rel="stylesheet" />
-    <link href="https://cdn.datatables.net/buttons/3.0.1/css/buttons.dataTables.css" rel="stylesheet" />
-    <script src="https://cdn.datatables.net/buttons/3.0.1/js/dataTables.buttons.js"></script>
-    <script src="https://cdn.datatables.net/buttons/3.0.1/js/buttons.dataTables.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-    <script src="https://cdn.datatables.net/buttons/3.0.1/js/buttons.html5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/3.0.1/js/buttons.print.min.js"></script>
+    <link href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/buttons/3.0.2/css/buttons.dataTables.css" rel="stylesheet" />
+    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js" ></script>
+    <script src="https://cdn.datatables.net/buttons/3.0.2/js/dataTables.buttons.js" ></script>
+    <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.dataTables.js" ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js" ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js" ></script>
+    <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js" ></script>
+    <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.print.min.js" ></script>
+
+    <!-- Import FileSaver.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.4/FileSaver.min.js"></script>
+    <!-- Import XLSX.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
     {{-- fontawesome --}}
     <link href="{{asset('fontawesome/css/all.css')}}" rel="stylesheet" />
     {{-- sweetalert2 --}}

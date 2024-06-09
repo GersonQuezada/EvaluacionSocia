@@ -8,6 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class PreEvaluacion extends Model
 {
     protected $table = 'RSG_PREEVALUADOR';
-    protected $PrimaryKey = 'CODPREEVALUADOR';
+    protected $primaryKey = 'CODPREEVALUADOR'; // Debe ser en minúsculas
     use HasFactory;
 }

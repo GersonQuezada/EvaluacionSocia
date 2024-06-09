@@ -8,75 +8,195 @@
 
         <script>
 
-            var table =  new DataTable('#PreEvaluadores', {
+            var oTable =  new DataTable('#preevaluacion-table', {
                     responsive: true,
-                    processing: true,
-                    serverSide: true,
-                    autowidth: false,
+                    bProcessing: true,
+                    bServerSide: true,
+                    bAutoWidth: false,
+                    sDom: '<"row"<"col-sm-12 col-md-4"l><"col-sm-12 col-md-4"B><"col-sm-12 col-md-4"f>>t<"row"<"col-sm-12 col-md-6"i><"col-sm-12 col-md-6"p>>',
                     buttons:[
                         {
                             extend:    'excelHtml5',
                             text:      '<i class="fas fa-file-excel"></i> ',
                             titleAttr: 'Exportar a Excel',
-                            footer: true,
                             title: "Lista de Pre Evaluaciones",
-                            // action: function (e, dt, node, config, cb) {
-                            //     alert('Activated!');
-                            //     this.disable();
-                            //     DataTable.ext.buttons.csvHtml5.action.call(this, e, dt, node, config, cb);
-                            // }
+                            action: function(e, dt, button, config) {
+                                // Recuperar los parámetros actuales de filtrado, búsqueda y ordenación
+                                var aParams = dt.ajax.params();
+                                // Modificar los parámetros para obtener todos los registros
+                                aParams.length = -1;
+                                    $.ajax({
+                                        type: "GET",
+                                        url: "{{route('pre-evaluaciones.data')}}", // or "/ajax-handler/" depending on your setup
+                                        data: aParams,
+                                        success: function(data) {
+                                            const worksheet = XLSX.utils.json_to_sheet(  data.data );
+                                            // Agregar un encabezado personalizado
+                                            const header = [
+                                                "Id",
+                                                "Nombre Socia",
+                                                "DNI",
+                                                "Banca Comunal",
+                                                "Fecha de Creacion",
+                                                "Asesor",
+                                                "Monto",
+                                                "Plazo",
+                                                "Cuota",
+                                                "Nivel Riesgo",
+                                                "Sub Neto",
+                                                "Deuda Externa",
+                                                "Ingreso Neto",
+                                                "Capacidad de Pago",
+                                                "Sucursal",
+                                                "Fecha de 1er Modificacion",
+                                                "Fecha de 2da Modificacion",
+                                                "Fecha Vigente del Pre Evaluador"
+                                            ];
+                                            const headerRow = XLSX.utils.aoa_to_sheet([header]);
+                                            XLSX.utils.sheet_add_aoa(worksheet, [header], { origin: "A1" });
+
+                                            // console.log(data.data);
+
+                                            const workbook = {
+                                                Sheets:{
+                                                    'PreEvaluadores':worksheet
+                                                },
+                                                SheetNames:['PreEvaluadores']
+                                            };
+
+                                            // Agregar estilos a las celdas de encabezado
+                                            const headerRange = XLSX.utils.decode_range(worksheet['!ref']);
+                                            for (let C = headerRange.s.c; C <= headerRange.e.c; ++C) {
+                                                const address = XLSX.utils.encode_col(C) + "1"; // Primera fila (encabezado)
+                                                if (!worksheet[address]) continue;
+                                                worksheet[address].s = {
+                                                    font: {
+                                                        bold: true,
+                                                        color: { rgb: "#666666" }
+                                                    },
+                                                    fill: {
+                                                        fgColor: { rgb: "4F81BD" }
+                                                    }
+                                                };
+                                            }
+
+
+                                            const excelBuffer = XLSX.write(workbook,{bookType:'xlsx',type:'array'});
+                                            saveAsExcel(excelBuffer,"Lista de Pre Evaluaciones");
+                                            $(button).prop('disabled', false).removeClass('processing');
+                                        },error: function(xhr, status, error) {
+                                            console.error("AJAX error: ", error);
+                                            $(button).prop('disabled', false).removeClass('processing'); // Desactivar estado de procesamiento en caso de error
+                                        }
+                                    });
+                            }
                         },
                         {
                             extend:    'pdfHtml5',
                             text:      '<i class="fas fa-file-pdf"></i> ',
-                            titleAttr: 'Exportar a PDF'
-                        },
-                        {
-                            extend:    'print',
-                            text:      '<i class="fa fa-print"></i> ',
-                            titleAttr: 'Imprimir'
+                            titleAttr: 'Exportar a PDF',
+                            className: 'btn btn-danger'
                         }
                     ],
-                    layout: {
-                        topStart: 'buttons'
-                    },
+                    initComplete: function(settings, json) {
+                        $('input.dt-input').attr('placeholder', 'Ingrese nombre o DNI');
+                    }
+                    ,
+                    lengthMenu: [
+                        [10, 25, 50, -1],
+                        [10, 25, 50, 'All']
+                    ],
                     language: {
                         url : "{{asset('es-ES.json')}}"
                     },
                     ajax: "{{route('pre-evaluaciones.data')}}",
-                    columns: [
+                    aoColumns: [
                         { data: 'nombrecompleto', searchable: true }, // Nombre de la columna y clave en el JSON
                         { data: 'dni', searchable: true  },
                         { data: 'bancocomunal' , searchable: false },
                         { data: 'fecha', searchable: false },
                         { data: 'asesor', searchable: false },
-                        { data: 'monto' , searchable: false },
+                        { data: 'monto', searchable: false ,
+                            render: function ( data, type, row) {
+                                    let to = (row.cuota).split('.');
+                                    let tot = 0;
+                                    if(to[0] == ""){
+                                        tot = 'S/'+0.00;
+                                    }else{
+                                    tot = 'S/'+row.cuota;
+                                    }
+                                    return tot;
+                                }
+                        },
                         { data: 'plazo', searchable: false  },
-                        { data: 'cuota' , searchable: false },
+                        { data: 'cuota' , searchable: false ,
+                            render: function ( data, type, row) {
+                                let to = (row.cuota).split('.');
+                                let tot = 0;
+                                if(to[0] == ""){
+                                    tot = 'S/'+0.00;
+                                }else{
+                                tot = 'S/'+row.cuota;
+                                }
+                                return tot;
+                            }
+                        },
                         { data: 'nivelriesgo' , searchable: false},
-                        { data: 'subneto' , searchable: false },
-                        { data: 'deudaexterna', searchable: false  },
-                        { data: 'ingresoneto' , searchable: false },
+                        { data: 'subneto' , searchable: false ,
+                            render: function ( data, type, row) {
+                                    let to = (row.subneto).split('.');
+                                    let tot = 0;
+                                    if(to[0] == ""){
+                                        tot = 'S/'+0.00;
+                                    }else{
+                                    tot = 'S/'+row.subneto;
+                                    }
+                                    return tot;
+                                }
+                        },
+                        { data: 'deudaexterna', searchable: false ,
+                            render: function ( data, type, row) {
+                                    let to = (row.deudaexterna).split('.');
+                                    let tot = 0;
+                                    if(to[0] == ""){
+                                        tot = 'S/'+0.00;
+                                    }else{
+                                    tot = 'S/'+row.deudaexterna;
+                                    }
+                                    return tot;
+                                }
+                        },
+                        { data: 'ingresoneto' , searchable: false ,
+                            render: function ( data, type, row) {
+                                        let to = (row.deudaexterna).split('.');
+                                        let tot = 0;
+                                        if(to[0] == ""){
+                                            tot = 'S/'+0.00;
+                                        }else{
+                                        tot = 'S/'+row.deudaexterna;
+                                        }
+                                        return tot;
+                                    }
+                        },
                         { data: 'capacidadpago', searchable: false },
                         { data: 'CODREGION' , searchable: false},
                         { data: 'fechamodificada' , searchable: false},
                         { data: 'fechamodi_actual' , searchable: false},
-                        { data: 'FECHAVIGENCIA', searchable: false },
-                        // { data: 'dni' }, // Otra columna y su clave
+                        { data: 'FECHAVIGENCIA', searchable: false }
 
-                    ]
+                    ],
+                    bPaginate:true,
+                    bDestroy: true,
             });
 
+            const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+            const EXCEL_EXTENSION = '.xlsx';
 
-            $('#search-btn').click(function() {
-                var nroDocumento = $('#NRODNI').val();
-                table.search(nroDocumento).draw();
-            });
-            $('#NRODNI').on('keyup', function(e) {
-                if (e.keyCode === 13) {
-                    $('#search-btn').click();
-                }
-            });
+            function saveAsExcel(buffer,filename){
+                const data = new Blob([buffer],{ type : EXCEL_TYPE});
+                saveAs(data,filename+EXCEL_EXTENSION);
+            }
+
 
 
         </script>
@@ -115,7 +235,7 @@
         <div class="card-header">
         </div>
         <div class="card-body">
-            <table id="PreEvaluadores"  class="table table-hover  table-responsive border" style="width:100%">
+            <table id="preevaluacion-table"  class="table table-hover  table-responsive border" style="width:100%">
                 <thead class="thead-light ">
                         <th class="align-middle text-center text-black-50">Nombre Socia</th>
                         <th class="align-middle text-center text-black-50">DNI</th>
@@ -139,10 +259,15 @@
 
                 </tfoot>
             </table>
+
+
+
         </div>
     </div>
 
 @stop
+
+
 
 
 
