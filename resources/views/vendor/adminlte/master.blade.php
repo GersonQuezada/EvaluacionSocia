@@ -109,10 +109,16 @@
     <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.html5.min.js" ></script>
     <script src="https://cdn.datatables.net/buttons/3.0.2/js/buttons.print.min.js" ></script>
 
-    <!-- Import FileSaver.js -->
+    {{-- <!-- Import FileSaver.js --> --}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.4/FileSaver.min.js"></script>
-    <!-- Import XLSX.js -->
+    {{-- <!-- Import XLSX.js --> --}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+    {{-- <!-- Incluye la biblioteca de moment.js --> --}}
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment-with-locales.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     {{-- fontawesome --}}
     <link href="{{asset('fontawesome/css/all.css')}}" rel="stylesheet" />
     {{-- sweetalert2 --}}
@@ -145,7 +151,7 @@
 
     {{-- Base Scripts --}}
     @if(!config('adminlte.enabled_laravel_mix'))
-        <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
+        {{-- <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script> --}}
         <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
         <script src="{{ asset('vendor/overlayScrollbars/js/jquery.overlayScrollbars.min.js') }}"></script>
         <script src="{{ asset('vendor/adminlte/dist/js/adminlte.min.js') }}"></script>

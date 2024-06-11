@@ -30,6 +30,18 @@ class PreEvaluacionController extends Controller
 
     public function IndexSocia()
     {
+        if($this->request->ajax()){
+
+            $userId = auth()->user()->id;
+            $Sucursales = DB::table('rsg_usuario_sucursal')->where('IN_usuario_ID',$userId)->pluck('VC_COD_SUCURSAL');
+            $query = PreEvaluacion::whereIn('CODREGION', $Sucursales);
+            if($this->request->filled('from_date') && $this->request->filled('end_date')){
+                $query = $query->whereBetween('fecha',[$this->request->from_date,$this->request->end_date]);
+            }          
+            // return  DataTables::make($queryResult)->toJson();
+            return DataTables::of($query)->make(true);
+        }
+
         return view('PreEvaluaciones.socia');
     }
 

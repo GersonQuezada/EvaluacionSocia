@@ -27,7 +27,7 @@ Route::get('/', function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::get('/PreEvaluadores/socia', [PreEvaluacionController::class, 'IndexSocia']);
+    Route::get('/PreEvaluadores/socia', [PreEvaluacionController::class, 'IndexSocia'])->name('PreEvaluadorSocia.index');
     Route::get('/PreEvaluadores/bancaComunal', [PreEvaluacionController::class, 'IndexBC']);
     Route::get('/pre-evaluaciones/data', [DatatableController::class, 'DataTablePreEvaluadores'])->name('pre-evaluaciones.data');
     Route::get('/MallaSentinel/socia', [MallaSentinelController::class, 'IndexSocia']);
