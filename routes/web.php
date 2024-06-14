@@ -28,14 +28,16 @@ Route::get('/', function () {
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::get('/PreEvaluadores/socia', [PreEvaluacionController::class, 'IndexSocia'])->name('PreEvaluadorSocia.index');
-    Route::get('/PreEvaluadores/bancaComunal', [PreEvaluacionController::class, 'IndexBC']);
-    Route::get('/pre-evaluaciones/data', [DatatableController::class, 'DataTablePreEvaluadores'])->name('pre-evaluaciones.data');
+    Route::post('/pre-evaluacionn/id',[PreEvaluacionController::class, 'BuscarPreEvaluacionID'])->name('PreEvaludores.id');
+
+    Route::get('/PreEvaluadores/bancaComunal', [PreEvaluacionController::class, 'IndexBC']) ->name('PreEvaluadorBancaComunal.index') ;
+    // Route::g et('/pre-evaluaciones/data', [DatatableController::class, 'DataTablePreEvaluadores'])->name('pre-evaluaciones.data');
     Route::get('/MallaSentinel/socia', [MallaSentinelController::class, 'IndexSocia']);
     Route::get('/MallaSentinel/bancaComunal', [MallaSentinelController::class, 'IndexBC']);
     Route::post('/Malla-Sentinel/data', [DatatableController::class, 'DataTableMallaSentinel'])->name('malla-sentinel.data');
 });
 
-
+Route::post('/pre-evaluacionn/register',[PreEvaluacionController::class, 'StorePreEvaluador'])->name('PreEvaludores.register');
 
 require __DIR__.'/auth.php';
 
