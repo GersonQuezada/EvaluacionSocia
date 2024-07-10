@@ -8,174 +8,9 @@
 
         <script>
             'use strict';
-            // Escucha el evento 'hidden.bs.modal' del modal
-            $('#modal_1').on('hidden.bs.modal', function () {
-                // Limpia los campos del modal
-                $('#modal_1').find('input[type=text], input[type=number]').val('');
-                 // Elimina la clase 'is-invalid' y otras clases de error
-                $('#modal_1').find('input[type=text], input[type=number]').removeClass('is-invalid').removeClass('is-valid');
-                // Limpia los mensajes de error
-                $('#modal_1').find('.invalid-feedback').html('');
-            });
-            let CapacidadPagosOriginal = '0.00';
-            let id;
-            function editarRegistro(id) {
-                $.ajax({
-                    type: "POST",
-                    url: "{{ route('PreEvaludores.id') }}",
-                    data: {
-                        id: id
-                    },
-                    dataType: "json",
-                    headers: {
-                        'X-CSRF-TOKEN': "{{ csrf_token() }}" // Agregar el token CSRF como un encabezado
-                    },
-                    success: function (data) {
-                        //Pasammos Valores a los campos del Modal
-                        document.getElementById('SociaName').value = data[0].nombrecompleto;
-                        document.getElementById('BancaComunal').value = data[0].bancocomunal;
-                        document.getElementById('SubIngresosNetos').value = data[0].subneto;
-                        document.getElementById('IngresoNeto').value = data[0].ingresoneto;
-                        document.getElementById('CapacidadPago').value = data[0].capacidadpago;
-                        document.getElementById('DeudaExterna').value = data[0].deudaexterna;
-                        CapacidadPagosOriginal = data[0].capacidadpago;
-                        document.getElementById('id').value = data[0].CODPREEVALUADOR;
-                    }
-                });
-            }
-
-            function validateDecimal(event) {
-                const input = event.target.value;
-                const parts = input.split('.');
-
-                // Si hay más de una parte (es decir, si se ingresó un punto), limitamos la parte decimal a dos dígitos
-                if (parts.length > 1) {
-                    const integerPart = parts[0];
-                    let decimalPart = parts[1];
-
-                    // Limitamos la parte decimal a dos dígitos
-                    decimalPart = decimalPart.substring(0, 2);
-
-                    // Volvemos a unir las partes
-                    event.target.value = integerPart + '.' + decimalPart;
-                }
-            }
-
-            function CalculaCapacidadPago(event){
-                validateDecimal(event);
-                let CuotaActual = document.getElementById('CuotaEvaluado').value;
-                let IngresoNeto = document.getElementById('IngresoNeto').value;
-                // Verificar si CuotaActual es un número válido y no es cero
-                if (!isNaN(CuotaActual) && CuotaActual !== 0 && CuotaActual !== null) {
-                    // Calcular la nueva Capacidad de Pago
-                    let nuevaCapacidadPago = IngresoNeto / CuotaActual;
-                    // Verificar si la nueva Capacidad de Pago es un número finito
-                    if (isFinite(nuevaCapacidadPago)) {
-                        // Asignar el nuevo valor de CapacidadPago
-                        document.getElementById('CapacidadPago').value = nuevaCapacidadPago.toFixed(2);
-                    } else {
-                        // Si la división resulta en Infinity o NaN, regresar al valor original
-                        document.getElementById('CapacidadPago').value = CapacidadPagosOriginal;
-                    }
-                } else {
-                    // Si CuotaActual no es válido o es cero, regresar al valor original
-                    document.getElementById('CapacidadPago').value = CapacidadPagosOriginal;
-                }
-            }
-
-            function CalcularIngresoNeto(event){
-                validateDecimal(event);
-                let SubIngresosNetos = document.getElementById('SubIngresosNetos').value;
-                let DeudaExterna = document.getElementById('DeudaExterna').value;
-                let Resultado = SubIngresosNetos - DeudaExterna;
-                document.getElementById('IngresoNeto').value =  Resultado.toFixed(2);
-            }
-
-            function AgregarPreSolicitud(){
-                $.ajax({
-                    type: "POST",
-                    url: "{{ route('PreEvaludores.register') }}",
-                    data: {
-                        id: document.getElementById('id').value,
-                        nombrecompleto : document.getElementById('SociaName').value,
-                        bancocomunal : document.getElementById('BancaComunal').value,
-                        monto : document.getElementById('MtoEvaluado').value,
-                        plazo : document.getElementById('PlazoEvaluado').value,
-                        cuota : document.getElementById('CuotaEvaluado').value,
-                        subneto : document.getElementById('SubIngresosNetos').value,
-                        deudaexterna : document.getElementById('DeudaExterna').value,
-                        ingresoneto : document.getElementById('IngresoNeto').value,
-                        capacidadpago: document.getElementById('CapacidadPago').value
-                    },
-                    dataType: "json",
-                    headers: {
-                        'X-CSRF-TOKEN': "{{ csrf_token() }}" // Agregar el token CSRF como un encabezado
-                    },
-                    success: function(data, status, xhr) {
-                            if (data.error === true) {
-                                // Mostrar mensaje de error por otro motivo
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error',
-                                    text: data.message
-                                });
-                            } else {
-                                // Mostrar mensaje de éxito
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Operación Exitosa',
-                                    text: data.message
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        // Cerrar el modal
-                                        $('#modal_1').modal('hide');
-                                        // Recargar la página
-                                        location.reload();
-                                    }
-                                });
-                            }
-                    },
-                        error: function(xhr, status, error) {
-                            console.log(xhr.status);
-                            if (xhr.status === 422) {
-                                // Mostrar mensaje de error general
-                                var response = xhr.responseJSON;
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error',
-                                    text: response.message
-                                });
-                                if (response.errors) {
-                                    $.each(response.errors, function(key, value) {
-                                        // Agregar clase de error al campo correspondiente
-                                        $('input[name="' + key + '"]').addClass('is-invalid');
-                                        // Mostrar el mensaje de error de validación
-                                        $('input[name="' + key + '"]').closest('.col-sm-4').find('.invalid-feedback').html('<strong>' + value[0] + '</strong>');
-                                    });
-                                }
-                            } else {
-                                // Manejar otros códigos de estado si es necesario
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error',
-                                    text: 'Error ' + xhr.status + ': ' + error
-                                });
-                            }
-                    }
-                });
-
-            }
-            const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-            const EXCEL_EXTENSION = '.xlsx';
-
-            function saveAsExcel(buffer,filename){
-                const data = new Blob([buffer],{ type : EXCEL_TYPE});
-                saveAs(data,filename+EXCEL_EXTENSION);
-            }
-
             $(document).ready(function() {
                 moment.locale('es');
-                var start_date = moment().subtract(2, 'month');
+                var start_date = moment().subtract(1, 'year');
                 var end_date = moment();
                 $('#dateRange span').html(start_date.format('MMMM D, YYYY') + ' - ' + end_date.format('MMMM D, YYYY'));
                 $('#dateRange').daterangepicker({
@@ -349,6 +184,176 @@
                 });
 
             });
+            // Escucha el evento 'hidden.bs.modal' del modal
+            $('#modal_1').on('hidden.bs.modal', function () {
+                // Limpia los campos del modal
+                $('#modal_1').find('input[type=text], input[type=number]').val('');
+                 // Elimina la clase 'is-invalid' y otras clases de error
+                $('#modal_1').find('input[type=text], input[type=number]').removeClass('is-invalid').removeClass('is-valid');
+                // Limpia los mensajes de error
+                $('#modal_1').find('.invalid-feedback').html('');
+            });
+            let CapacidadPagosOriginal = '0.00';
+            let id;
+            function editarRegistro(id) {
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('PreEvaludores.id') }}",
+                    data: {
+                        id: id
+                    },
+                    dataType: "json",
+                    headers: {
+                        'X-CSRF-TOKEN': "{{ csrf_token() }}" // Agregar el token CSRF como un encabezado
+                    },
+                    success: function (data) {
+                        //Pasammos Valores a los campos del Modal
+                        document.getElementById('SociaName').value = data[0].nombrecompleto;
+                        document.getElementById('BancaComunal').value = data[0].bancocomunal;
+                        document.getElementById('SubIngresosNetos').value = data[0].subneto;
+                        document.getElementById('IngresoNeto').value = data[0].ingresoneto;
+                        document.getElementById('CapacidadPago').value = data[0].capacidadpago;
+                        document.getElementById('DeudaExterna').value = data[0].deudaexterna;
+                        CapacidadPagosOriginal = data[0].capacidadpago;
+                        document.getElementById('id').value = data[0].CODPREEVALUADOR;
+                    }
+                });
+            }
+
+            function validateDecimal(event) {
+                const input = event.target.value;
+                const parts = input.split('.');
+
+                // Si hay más de una parte (es decir, si se ingresó un punto), limitamos la parte decimal a dos dígitos
+                if (parts.length > 1) {
+                    const integerPart = parts[0];
+                    let decimalPart = parts[1];
+
+                    // Limitamos la parte decimal a dos dígitos
+                    decimalPart = decimalPart.substring(0, 2);
+
+                    // Volvemos a unir las partes
+                    event.target.value = integerPart + '.' + decimalPart;
+                }
+            }
+
+            function CalculaCapacidadPago(event){
+                validateDecimal(event);
+                let CuotaActual = document.getElementById('CuotaEvaluado').value;
+                let IngresoNeto = document.getElementById('IngresoNeto').value;
+                // Verificar si CuotaActual es un número válido y no es cero
+                if (!isNaN(CuotaActual) && CuotaActual !== 0 && CuotaActual !== null) {
+                    // Calcular la nueva Capacidad de Pago
+                    let nuevaCapacidadPago = IngresoNeto / CuotaActual;
+                    // Verificar si la nueva Capacidad de Pago es un número finito
+                    if (isFinite(nuevaCapacidadPago)) {
+                        // Asignar el nuevo valor de CapacidadPago
+                        document.getElementById('CapacidadPago').value = nuevaCapacidadPago.toFixed(2);
+                    } else {
+                        // Si la división resulta en Infinity o NaN, regresar al valor original
+                        document.getElementById('CapacidadPago').value = CapacidadPagosOriginal;
+                    }
+                } else {
+                    // Si CuotaActual no es válido o es cero, regresar al valor original
+                    document.getElementById('CapacidadPago').value = CapacidadPagosOriginal;
+                }
+            }
+
+            function CalcularIngresoNeto(event){
+                validateDecimal(event);
+                let SubIngresosNetos = document.getElementById('SubIngresosNetos').value;
+                let DeudaExterna = document.getElementById('DeudaExterna').value;
+                let Resultado = SubIngresosNetos - DeudaExterna;
+                document.getElementById('IngresoNeto').value =  Resultado.toFixed(2);
+            }
+
+            function AgregarPreSolicitud(){
+                $('#modal_1').find('input').removeClass('is-valid');
+                $.ajax({
+                    type: "POST",
+                    url: "{{ route('PreEvaludores.register') }}",
+                    data: {
+                        id: document.getElementById('id').value,
+                        nombrecompleto : document.getElementById('SociaName').value,
+                        bancocomunal : document.getElementById('BancaComunal').value,
+                        monto : document.getElementById('MtoEvaluado').value,
+                        plazo : document.getElementById('PlazoEvaluado').value,
+                        cuota : document.getElementById('CuotaEvaluado').value,
+                        subneto : document.getElementById('SubIngresosNetos').value,
+                        deudaexterna : document.getElementById('DeudaExterna').value,
+                        ingresoneto : document.getElementById('IngresoNeto').value,
+                        capacidadpago: document.getElementById('CapacidadPago').value
+                    },
+                    dataType: "json",
+                    headers: {
+                        'X-CSRF-TOKEN': "{{ csrf_token() }}" // Agregar el token CSRF como un encabezado
+                    },
+                    success: function(data, status, xhr) {
+                            if (data.error === true) {
+                                // Mostrar mensaje de error por otro motivo
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: data.message
+                                });
+                            } else {
+                                // Mostrar mensaje de éxito
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Operación Exitosa',
+                                    text: data.message
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        // Cerrar el modal
+                                        $('#modal_1').modal('hide');
+                                        // Recargar la página
+                                        location.reload();
+                                    }
+                                });
+                            }
+                    },
+                        error: function(xhr, status, error) {
+                            // console.log(xhr.status);
+                            if (xhr.status === 422) {
+                                // Mostrar mensaje de error general
+                                var response = xhr.responseJSON;
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: response.message
+                                });
+                                if (response.errors) {
+                                    $('input').removeClass('is-invalid');
+                                    $('#modal_1').find('.invalid-feedback').html('');
+                                    $.each(response.errors, function(key, value) {
+                                        // Agregar clase de error al campo correspondiente
+                                        $('input[name="' + key + '"]').addClass('is-invalid');
+                                        // Mostrar el mensaje de error de validación
+                                        $('input[name="' + key + '"]').closest('.col-sm-4').find('.invalid-feedback').html('<strong>' + value[0] + '</strong>');
+                                    });
+
+                                }
+                            } else {
+                                // Manejar otros códigos de estado si es necesario
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Error ' + xhr.status + ': ' + error
+                                });
+                            }
+                    }
+                });
+
+            }
+            const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+            const EXCEL_EXTENSION = '.xlsx';
+
+            function saveAsExcel(buffer,filename){
+                const data = new Blob([buffer],{ type : EXCEL_TYPE});
+                saveAs(data,filename+EXCEL_EXTENSION);
+            }
+
+
 
         </script>
 
@@ -387,30 +392,28 @@
                             <div class="col-sm-4">
                                 <label class="form-label">Nuevo Monto Evaluado:</label>
                                 <input type="number" step="any" class="form-control @error('monto') is-invalid @enderror " name="monto" id="MtoEvaluado" oninput="validateDecimal(event)">
-                                @error('monto') <span class="invalid-feedback" role="alert"> <strong>{{ $message }}</strong> </span> @enderror
-                                @error('monto')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
+                                <span class="invalid-feedback" role="alert">
+                                    {{-- <strong>{{ $message }}</strong>  --}}
+                                </span>
+
                             </div>
                             <div class="col-sm-4">
                                 <label class="form-label">Nuevo Plazo Evaluado:</label>
                                 <input type="number" class="form-control  @error('plazo') is-invalid @enderror" name="plazo" id="PlazoEvaluado" maxlength="2" oninput="if(this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" >
-                                @error('plazo')
+
                                     <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
+                                        {{-- <strong>{{ $message }}</strong> --}}
                                     </span>
-                                @enderror
+                                {{-- @enderror --}}
                             </div>
                             <div class="col-sm-4">
                                 <label class="form-label">Nueva Cuota Evaluado:</label>
                                 <input type="number" step="any" class="form-control  @error('cuota') is-invalid @enderror" name="cuota" id="CuotaEvaluado" oninput="CalculaCapacidadPago(event)">
-                                @error('cuota')
+                                {{-- @error('cuota') --}}
                                     <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
+                                        {{-- <strong>{{ $message }}</strong> --}}
                                     </span>
-                                @enderror
+                                {{-- @enderror --}}
                             </div>
                         </div>
                         <div class="row">

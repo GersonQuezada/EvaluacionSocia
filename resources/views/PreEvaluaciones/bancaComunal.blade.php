@@ -19,7 +19,7 @@
 
             $(document).ready(function() {
                 moment.locale('es');
-                var start_date = moment().subtract(2, 'month');
+                var start_date = moment().subtract(1, 'year');
                 var end_date = moment();
                 $('#dateRange span').html(start_date.format('MMMM D, YYYY') + ' - ' + end_date.format('MMMM D, YYYY'));
                 $('#dateRange').daterangepicker({

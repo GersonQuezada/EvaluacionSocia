@@ -85,20 +85,22 @@ class PreEvaluacionController extends Controller
             $preEvaluadorResponse = $this->BuscarPreEvaluacionID();
             $preEvaluadorActual = json_decode($preEvaluadorResponse->getContent());
 
-            if(!empty($preEvaluadorActual[0]->fechamodi_actual) ){
-                return response()->json([
-                    'error' => true,
-                    'message'=> 'Operacion rechazada, verifique las fechas.',
-                    'data' => '',
-                ], 200);
-            }
+            // if(!empty($preEvaluadorActual[0]->fechamodi_actual) ){
+            //     return response()->json([
+            //         'error' => true,
+            //         'message'=> 'Operacion rechazada, verifique las fechas.',
+            //         'data' => '',
+            //     ], 200);
+            // }
 
-            $fechas =  $this->Fechas(
-                $preEvaluadorActual[0]->fecha,
-                $preEvaluadorActual[0]->fechamodificada,
-                $preEvaluadorActual[0]->fechamodi_actual,
-                $preEvaluadorActual[0]->FECHAVIGENCIA
+            $fechasPreEvaluador = array(
+                'fechaCreacion' => $preEvaluadorActual[0]->fecha,
+                'fecha1erModificacion' => $preEvaluadorActual[0]->fechamodificada,
+                'fecha2daModificacion' => $preEvaluadorActual[0]->fechamodi_actual,
+                'fechaVigencia' => $preEvaluadorActual[0]->FECHAVIGENCIA
             );
+
+            $fechas =  $this->Fechas( $fechasPreEvaluador );
 
             $NewPreEvaluador = [
                 'nombrecompleto' => $datos['nombrecompleto'],
@@ -120,12 +122,12 @@ class PreEvaluacionController extends Controller
                 'FECHAVIGENCIA' => $fechas['FECHAVIGENCIA']
             ];
 
-            $response = PreEvaluacion::create($NewPreEvaluador);
-
+            // $response =  PreEvaluacion::create($NewPreEvaluador);
+            $response = PreEvaluacion::where('CODPREEVALUADOR', '=' ,  $preEvaluadorActual[0]->CODPREEVALUADOR)->update($NewPreEvaluador);
             if($response){
                 return response()->json([
                     'error' => false,
-                    'message' => 'Pre Evaluador creado exitosamente',
+                    'message' => 'Pre Evaluador Modificado exitosamente',
                     'data' => $response
                 ], 201);
             }else{
@@ -138,19 +140,37 @@ class PreEvaluacionController extends Controller
 
     }
 
-    public function Fechas($fechacreacion , $fechamodificada , $fechamodi_actual , $FECHAVIGENCIA ){
+    public function Fechas($fechasArray){
 
-        return empty($fechamodificada) ? array(
-            'fechacreacion' => $fechacreacion,
-            'fechamodificada' => date('Y-m-d'),
-            'fechamodi_actual' => '',
-            'FECHAVIGENCIA' => $FECHAVIGENCIA
-        ) : array(
-            'fechacreacion' => $fechacreacion,
-            'fechamodificada' => $fechamodificada,
-            'fechamodi_actual' => date('Y-m-d'),
-            'FECHAVIGENCIA' => $FECHAVIGENCIA
-        );
+        // $fechaNull = array_search('',$fechasArray);
+
+        // if($fechaNull !== false && $fechaNull > 0){
+        //     $valorAntesdelNull = $fechasArray[ $fechaNull - 1 ];
+
+        // }
+
+        if(empty($fechasArray['fecha1erModificacion'])){
+            return array(
+                'fechacreacion' => date('Y-m-d'),
+                'fechamodificada' => '',
+                'fechamodi_actual' => '',
+                'FECHAVIGENCIA' => $fechasArray['fechaVigencia']
+            );
+        }elseif(empty($fechasArray['fecha2daModificacion'])){
+            return array(
+                'fechacreacion' => $fechasArray['fechaCreacion'],
+                'fechamodificada' => date('Y-m-d'),
+                'fechamodi_actual' => '',
+                'FECHAVIGENCIA' => $fechasArray['fechaVigencia']
+            );
+        }elseif(!empty($fechasArray['fecha2daModificacion'])){
+            return array(
+                'fechacreacion' => $fechasArray['fechaCreacion'],
+                'fechamodificada' => $fechasArray['fecha1erModificacion'],
+                'fechamodi_actual' => date('Y-m-d'),
+                'FECHAVIGENCIA' => $fechasArray['fechaVigencia']
+            );
+        }
     }
     public function update(String $id)
     {
